@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Order Management</h1>
+        
+        <div class="order-filters">
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
+            <select id="orderStatus">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+            </select>
+            <button onclick="loadOrders()">Filter</button>
+        </div>
+
+        <div id="ordersList" class="orders-grid"></div>
+    </div>
+
+    <script>
+        async function loadOrders() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const status = document.getElementById('orderStatus').value;
+
+                const response = await fetch(`/api/orders?startDate=${startDate}&endDate=${endDate}&status=${status}`);
+                const orders = await response.json();
+
+                document.getElementById('ordersList').innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <h3>Order #${order._id}</h3>
+                        <p>Customer: ${order.customerName}</p>
+                        <p>Status: ${order.status}</p>
+                        <p>Total: $${order.total}</p>
+                        <button onclick="updateOrderStatus('${order._id}')">Update Status</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load orders:', error);
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>

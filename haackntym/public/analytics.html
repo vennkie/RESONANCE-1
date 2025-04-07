@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Analytics</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <div class="mock-container">
+        <div class="mock-card">
+            <h2>Demo Analytics</h2>
+            <p>This is a mock analytics dashboard.</p>
+            <!-- Similar structure but with mock data -->
+        </div>
+    </div>
+
+    <script>
+        // Mock API calls
+        async function fetchMockData() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                console.log('Mock data fetched:', data);
+            } catch (error) {
+                console.error('Mock error:', error);
+            }
+        }
+
+        fetchMockData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Service</h1>
+
+    <form id="aiForm">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" rows="4" cols="50"></textarea>
+        <br>
+        <button type="submit">Process Text</button>
+    </form>
+
+    <h3>Results:</h3>
+    <div>
+        <h4>Generated Response:</h4>
+        <p id="generatedResponse"></p>
+
+        <h4>Sentiment:</h4>
+        <p id="sentiment"></p>
+
+        <h4>Extracted Entities:</h4>
+        <p id="entities"></p>
+
+        <h4>Summary:</h4>
+        <p id="summary"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('aiForm');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const text = document.getElementById('text').value;
+
+            try {
+                const response = await fetch('/process-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text }),
+                });
+
+                const data = await response.json();
+                document.getElementById('generatedResponse').textContent = `AI Response: ${data.aiResponse}`;
+                document.getElementById('sentiment').textContent = `Sentiment: ${data.sentiment}`;
+                document.getElementById('entities').textContent = `Entities: ${data.entities}`;
+                document.getElementById('summary').textContent = `Summary: ${data.summary}`;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

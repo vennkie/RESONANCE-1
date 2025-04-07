@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <script src="/js/enterprise/crx.js" defer></script>
+    <script src="/components/nav.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="top-nav">
+            <h1>Products</h1>
+            <div class="cart-info">
+                <span data-cart-count>0</span> items
+                <span data-cart-total>$0.00</span>
+            </div>
+        </nav>
+
+        <form id="productSearchForm" class="search-form">
+            <select id="category">
+                <option value="">All Categories</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="books">Books</option>
+            </select>
+            <input type="text" id="search" placeholder="Search products...">
+            <select id="sort">
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+
+        <div id="productsList" class="products-grid"></div>
+        <div id="cartSidebar" class="cart-sidebar">
+            <h3>Shopping Cart</h3>
+            <div class="cart-items"></div>
+        </div>
+    </div>
+
+    <script>
+        async function handleError(error) {
+            console.error('Error:', error);
+            document.getElementById('productsList').innerHTML = 
+                `<div class="error">Failed to load products: ${error.message}</div>`;
+        }
+
+        document.getElementById('productSearchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const category = document.getElementById('category').value;
+            const search = document.getElementById('search').value;
+            const sort = document.getElementById('sort').value;
+
+            try {
+                const response = await fetch(`/api/products?category=${category}&search=${search}&sort=${sort}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const productsList = data.data.map(product => `
+                        <div class="product-card">
+                            <img src="${product.image}" alt="${product.name}">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <p class="price">$${product.price}</p>
+                            <button onclick="cartManager.addItem({productId: '${product._id}', quantity: 1})">
+                                Add to Cart
+                            </button>
+                        </div>
+                    `).join('');
+                    document.getElementById('productsList').innerHTML = productsList;
+                } else {
+                    document.getElementById('productsList').innerHTML = "Failed to load products.";
+                }
+            } catch (error) {
+                handleError(error);
+            }
+        });
+    </script>
+</body>
+</html>

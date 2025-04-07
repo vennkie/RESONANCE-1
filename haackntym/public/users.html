@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>User Management</h1>
+        
+        <div class="user-filters">
+            <input type="text" id="userSearch" placeholder="Search users...">
+            <select id="userStatus">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+
+        <div id="usersList" class="users-grid"></div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+                const usersList = document.getElementById('usersList');
+                
+                usersList.innerHTML = data.map(user => `
+                    <div class="user-card">
+                        <h3>${user.name}</h3>
+                        <p>Email: ${user.email}</p>
+                        <p>Status: ${user.status}</p>
+                        <button onclick="toggleUserStatus('${user._id}')">
+                            ${user.status === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        async function toggleUserStatus(userId) {
+            try {
+                await fetch(`/api/users/${userId}/toggle-status`, { method: 'POST' });
+                loadUsers();
+            } catch (error) {
+                console.error('Failed to toggle user status:', error);
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>

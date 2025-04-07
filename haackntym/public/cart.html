@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <script src="/js/enterprise/crx.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Cart</h1>
+        
+        <div class="cart-container">
+            <div class="cart-items"></div>
+            
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-details">
+                    <p>Subtotal: <span data-cart-total>$0.00</span></p>
+                    <p>Tax: <span id="taxAmount">$0.00</span></p>
+                    <p>Total: <span id="finalTotal">$0.00</span></p>
+                </div>
+                <button onclick="proceedToCheckout()" class="checkout-btn">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function proceedToCheckout() {
+            const cartData = Array.from(cartManager.cart.entries());
+            if (cartData.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            window.location.href = '/checkout.html';
+        }
+
+        // Initialize cart display
+        cartManager.updateUI();
+    </script>
+</body>
+</html>
